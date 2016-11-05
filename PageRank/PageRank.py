@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from __future__ import division
-from collections import namedtuple, defaultdict
+from collections import defaultdict
 from itertools import izip
 import time
 import sys
@@ -103,12 +103,12 @@ def readRoutes(fd):
     print "There were {0} invalid routes\n".format(invalid)
         
 
-def stopConditionIsReached(iterations, previous):
+def stopConditionIsReached(iterations, previousPageRank):
     if iterations >= MAX_ITERATIONS:
         return True
 
-    for airport, previous in izip(airportList, previous):
-        current = airport.pageRank
+    currentPageRank = [airport.pageRank for airport in airportList]
+    for current, previous in izip(currentPageRank, previousPageRank):
         if abs(current - previous) > EPSILON:
             return False
     
@@ -131,24 +131,24 @@ def initializePageRanks():
         airport.pageRank = 1/n
 
 
-def updatePageRanks(Q, previous):
+def updatePageRanks(Q, previousPageRank):
     for i, airport in enumerate(airportList):
-        previous[i] = airport.pageRank
+        previousPageRank[i] = airport.pageRank
         airport.pageRank = Q[i]
 
 
 def computePageRanks():
     initializePageRanks()
     n = len(airportList)
-    previous = [0] * n
+    previousPageRank = [0] * n
     iterations = 0
-    while not stopConditionIsReached(iterations, previous):
+    while not stopConditionIsReached(iterations, previousPageRank):
         Q = [0] * n
 
         for i in range(0, n):
             Q[i] = DAMPING_FACTOR*computePageRank(i) + (1-DAMPING_FACTOR)/n
 
-        updatePageRanks(Q, previous)
+        updatePageRanks(Q, previousPageRank)
         iterations += 1
 
     return iterations
