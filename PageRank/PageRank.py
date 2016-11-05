@@ -2,6 +2,7 @@
 
 from __future__ import division
 from collections import namedtuple, defaultdict
+from itertools import izip
 import time
 import sys
 
@@ -20,17 +21,17 @@ class Airport:
         self.routes = [] # list of airports that have this as destination
         self.routeHash = defaultdict(int) # routeHash[origin] = weight
         self.outweight = 0
-        self.pageIndex = 0
+        self.pageRank= 0
 
     def __repr__(self):
-        return "{0}\t{1}\t{2}".format(self.code, self.pageIndex, self.name)
+        return "{0}\t{1}\t{2}".format(self.code, self.pageRank, self.name)
 
 edgeList = [] # list of Edge
 edgeHash = defaultdict(int) # edgeHash[(origin, destination)] = weight
 airportList = [] # list of Airport
 airportHash = dict() # airportHash[code] = Airport
 
-EPSILON = 0.001
+EPSILON = 0.00001
 MAX_ITERATIONS = 100
 DAMPING_FACTOR = 0.8
 
@@ -102,56 +103,70 @@ def readRoutes(fd):
     print "There were {0} invalid routes\n".format(invalid)
         
 
-def stopConditionIsReached(iterations, current, previous, epsilon):
-    if iterations == 0 or iterations >= MAX_ITERATIONS:
+def stopConditionIsReached(iterations, previous):
+    if iterations >= MAX_ITERATIONS:
         return True
 
-    for i in range(len(current)):
-        if abs(current[i] - previous[i]) > EPSILON:
+    for airport, previous in izip(airportList, previous):
+        current = airport.pageRank
+        if abs(current - previous) > EPSILON:
             return False
     
     return True
 
 
-def computePageRank(airportPosition, P):
+def computePageRank(airportPosition):
     destinationAirport = airportList[airportPosition]
     
     pageRank = 0
-    for j, origin in enumerate(a.routes):
+    for origin in destinationAirport.routes:
         originAirport = airportHash[origin]
-        pageRank += P[j] * destinationAirport.routeHash[origin]/originAirport.outweight
+        pageRank += originAirport.pageRank * destinationAirport.routeHash[origin]/originAirport.outweight
 
     return pageRank
 
+def initializePageRanks():
+    n = len(airportList)
+    for airport in airportList:
+        airport.pageRank = 1/n
+
+
+def updatePageRanks(Q, previous):
+    for i, airport in enumerate(airportList):
+        previous[i] = airport.pageRank
+        airport.pageRank = Q[i]
+
 
 def computePageRanks():
+    initializePageRanks()
     n = len(airportList)
-    P = [1/n] * n
-    Q = [0] * n
-    previous = current = Q
+    previous = [0] * n
     iterations = 0
-    while not stopConditionIsReached(iterations, current, previous):
+    while not stopConditionIsReached(iterations, previous):
         Q = [0] * n
+
         for i in range(0, n):
-            Q[i] = DAMPING_FACTOR * computePageRank(i, P) + (1-L)/n
-        previous = current
-        current = Q
+            Q[i] = DAMPING_FACTOR*computePageRank(i) + (1-DAMPING_FACTOR)/n
+
+        updatePageRanks(Q, previous)
         iterations += 1
-    for i, value in enumerate(current):
-        airportList[i].pageIndex = value
-    return curr
+
+    return iterations
+
 
 def outputPageRanks():
+    print "IATA\tPageRank\tName"
     for airport in airportList:
         print airport
+
 
 def main():
     readAirports("airports.txt")
     readRoutes("routes.txt")
     time1 = time.time()
-    #iterations = computePageRanks()
+    iterations = computePageRanks()
     time2 = time.time()
-    #outputPageRanks()
+    outputPageRanks()
 
     print "#Iterations:", iterations
     print "Time of computePageRanks():", time2-time1
