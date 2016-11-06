@@ -1,2 +1,2 @@
 # FIB-CAIM
-SEARCHING AND ANALYSIS OF MASSIVE INFORMATION (CAIM) - Fall 2016
+Searching and Analysis of Massive Information - Fall 2016 - UPC
