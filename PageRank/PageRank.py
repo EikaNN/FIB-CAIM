@@ -33,7 +33,7 @@ airportHash = dict() # airportHash[code] = Airport
 
 EPSILON = 0.00001
 MAX_ITERATIONS = 100
-DAMPING_FACTOR = 0.8
+DAMPING_FACTOR = 0.9
 
 def readAirports(fd):
     print "Reading Airport file from {0}".format(fd)
@@ -118,6 +118,8 @@ def stopConditionIsReached(iterations, previousPageRank):
 def computePageRank(airportPosition):
     destinationAirport = airportList[airportPosition]
     pageRank = 0
+    if len(destinationAirport.routes) == 0:
+        return 1.0/len(airportList)
     for origin in destinationAirport.routes:
         originAirport = airportHash[origin]
         edgeWeight = destinationAirport.routeHash[origin]
@@ -140,27 +142,13 @@ def computePageRanks():
     initializePageRanks(n)
     previousPageRank = [0] * n
     iterations = 0
-    prAnt = 0.0
-
-    #calculate first extra PageRank
-    for airport in airportList:
-        if airport.outweight == 0:
-            prAnt += airport.pageRank/n
-
 
     while not stopConditionIsReached(iterations, previousPageRank):
         Q = [0] * n
-        prExtra = 0.0
-        #print prAnt
         for i in range(0, n):
             Q[i] = DAMPING_FACTOR*computePageRank(i) + (1-DAMPING_FACTOR)/n
             airport = airportList[i]
-            Q[i] += prAnt
-            if airport.outweight == 0:
-                prExtra += airport.pageRank/n
 
-        #print sum(previousPageRank)
-        prAnt = prExtra
         updatePageRanks(Q, previousPageRank)
         print sum(Q)
         iterations += 1
@@ -175,8 +163,8 @@ def outputPageRanks():
 
 
 def main():
-    readAirports("nodes.txt")
-    readRoutes("edges.txt")
+    readAirports("airports.txt")
+    readRoutes("routes.txt")
     time1 = time.time()
     iterations = computePageRanks()
     time2 = time.time()
