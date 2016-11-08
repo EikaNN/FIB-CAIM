@@ -121,12 +121,12 @@ def computePageRank(airportPosition):
     pageRank = 0
     for origin in destinationAirport.routes:
         originAirport = airportHash[origin]
-        pageRank += originAirport.pageRank * destinationAirport.routeHash[origin]/originAirport.outweight
+        edgeWeight = destinationAirport.routeHash[origin]
+        pageRank += originAirport.pageRank * edgeWeight/originAirport.outweight
 
     return pageRank
 
-def initializePageRanks():
-    n = len(airportList)
+def initializePageRanks(n):
     for airport in airportList:
         airport.pageRank = 1/n
 
@@ -138,8 +138,8 @@ def updatePageRanks(Q, previousPageRank):
 
 
 def computePageRanks():
-    initializePageRanks()
     n = len(airportList)
+    initializePageRanks(n)
     previousPageRank = [0] * n
     iterations = 0
     while not stopConditionIsReached(iterations, previousPageRank):
@@ -149,6 +149,7 @@ def computePageRanks():
             Q[i] = DAMPING_FACTOR*computePageRank(i) + (1-DAMPING_FACTOR)/n
 
         updatePageRanks(Q, previousPageRank)
+        print sum(Q)
         iterations += 1
 
     return iterations
@@ -161,8 +162,8 @@ def outputPageRanks():
 
 
 def main():
-    readAirports("airports.txt")
-    readRoutes("routes.txt")
+    readAirports("nodes.txt")
+    readRoutes("edges.txt")
     time1 = time.time()
     iterations = computePageRanks()
     time2 = time.time()
