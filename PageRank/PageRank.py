@@ -8,7 +8,7 @@ import sys
 
 class Edge:
     def __init__ (self, origin=None):
-        self.origin = origin 
+        self.origin = origin
         self.weight = 1
 
     def __repr__(self):
@@ -101,7 +101,7 @@ def readRoutes(fd):
     routesTxt.close()
     print "There were {0} valid routes".format(valid)
     print "There were {0} invalid routes\n".format(invalid)
-        
+
 
 def stopConditionIsReached(iterations, previousPageRank):
     if iterations >= MAX_ITERATIONS:
@@ -111,19 +111,17 @@ def stopConditionIsReached(iterations, previousPageRank):
     for current, previous in izip(currentPageRank, previousPageRank):
         if abs(current - previous) > EPSILON:
             return False
-    
+
     return True
 
 
 def computePageRank(airportPosition):
     destinationAirport = airportList[airportPosition]
-    
     pageRank = 0
     for origin in destinationAirport.routes:
         originAirport = airportHash[origin]
         edgeWeight = destinationAirport.routeHash[origin]
-        pageRank += originAirport.pageRank * edgeWeight/originAirport.outweight
-
+        pageRank += originAirport.pageRank * destinationAirport.routeHash[origin]/originAirport.outweight
     return pageRank
 
 def initializePageRanks(n):
@@ -142,12 +140,27 @@ def computePageRanks():
     initializePageRanks(n)
     previousPageRank = [0] * n
     iterations = 0
+    prAnt = 0.0
+
+    #calculate first extra PageRank
+    for airport in airportList:
+        if airport.outweight == 0:
+            prAnt += airport.pageRank/n
+
+
     while not stopConditionIsReached(iterations, previousPageRank):
         Q = [0] * n
-
+        prExtra = 0.0
+        #print prAnt
         for i in range(0, n):
             Q[i] = DAMPING_FACTOR*computePageRank(i) + (1-DAMPING_FACTOR)/n
+            airport = airportList[i]
+            Q[i] += prAnt
+            if airport.outweight == 0:
+                prExtra += airport.pageRank/n
 
+        #print sum(previousPageRank)
+        prAnt = prExtra
         updatePageRanks(Q, previousPageRank)
         print sum(Q)
         iterations += 1
