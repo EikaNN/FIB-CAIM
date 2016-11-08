@@ -18,7 +18,7 @@ class Airport:
     def __init__ (self, iden=None, name=None):
         self.code = iden
         self.name = name
-        self.routes = [] # list of airports that have this as destination
+        self.routes = set() # set of airports that have this as destination
         self.routeHash = defaultdict(int) # routeHash[origin] = weight
         self.outweight = 0
         self.pageRank= 0
@@ -93,7 +93,7 @@ def readRoutes(fd):
         originAirport.outweight += 1
 
         # Destination updates
-        destinationAirport.routes.append(origin)
+        destinationAirport.routes.add(origin)
         destinationAirport.routeHash[origin] += 1
 
         valid += 1
