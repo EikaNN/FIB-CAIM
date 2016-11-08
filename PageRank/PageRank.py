@@ -24,7 +24,7 @@ class Airport:
         self.pageRank= 0
 
     def __repr__(self):
-        return "{0}\t{1}\t{2}".format(self.code, self.pageRank, self.name)
+        return "{0:4s}\t{1:.8f}\t{2}".format(self.code, self.pageRank, self.name)
 
 edgeList = [] # list of Edge
 edgeHash = defaultdict(int) # edgeHash[(origin, destination)] = weight
@@ -33,10 +33,27 @@ airportHash = dict() # airportHash[code] = Airport
 
 EPSILON = 0.00001
 MAX_ITERATIONS = 100
-DAMPING_FACTOR = 0.9
+DAMPING_FACTOR = 0.85
+AIRPORTS_FILE = "airports.txt"
+ROUTES_FILE = "routes.txt"
+
+def initialMessage():
+    print "##############################################################################"
+    print "                            PAGE RANK ALGORITHM                               "
+    print "##############################################################################"
+    print ""
+    print "This program computes the Page Rank of a network of airports and flights"
+    print "Page Rank algorithm uses the following parameters:"
+    print "\t - MAX_ITERATIONS = {0}".format(MAX_ITERATIONS)
+    print "\t - DAMPING_FACTOR = {0}".format(DAMPING_FACTOR)
+    print "\t - EPSILON = {0}".format(EPSILON)
+    print ""
+    print "##############################################################################"
+    print ""
 
 def readAirports(fd):
     print "Reading Airport file from {0}".format(fd)
+
     airportsTxt = open(fd, "r")
     valid = invalid = 0
     for line in airportsTxt.readlines():
@@ -67,6 +84,7 @@ def readAirports(fd):
 
 def readRoutes(fd):
     print "Reading Routes file from {0}".format(fd)
+
     routesTxt = open(fd, "r")
     valid = invalid = 0
     for line in routesTxt.readlines():
@@ -100,7 +118,7 @@ def readRoutes(fd):
 
     routesTxt.close()
     print "There were {0} valid routes".format(valid)
-    print "There were {0} invalid routes\n".format(invalid)
+    print "There were {0} invalid routes".format(invalid)
 
 
 def stopConditionIsReached(iterations, previousPageRank):
@@ -117,16 +135,18 @@ def stopConditionIsReached(iterations, previousPageRank):
 
 def computePageRank(airportPosition):
     destinationAirport = airportList[airportPosition]
-    pageRank = 0
 
-    if len(destinationAirport.routes) == 0:
+    if destinationAirport.outweight == 0:
         return 1.0/len(airportList)
-        
+
+    pageRank = 0
     for origin in destinationAirport.routes:
         originAirport = airportHash[origin]
         edgeWeight = destinationAirport.routeHash[origin]
-        pageRank += originAirport.pageRank * destinationAirport.routeHash[origin]/originAirport.outweight
+        pageRank += originAirport.pageRank * edgeWeight/originAirport.outweight
+
     return pageRank
+
 
 def initializePageRanks(n):
     for airport in airportList:
@@ -142,15 +162,16 @@ def updatePageRanks(Q, previousPageRank):
 def computePageRanks():
     n = len(airportList)
     initializePageRanks(n)
+
     previousPageRank = [0] * n
     iterations = 0
-
     while not stopConditionIsReached(iterations, previousPageRank):
+
         Q = [0] * n
         for i in range(0, n):
             Q[i] = DAMPING_FACTOR*computePageRank(i) + (1-DAMPING_FACTOR)/n
             airport = airportList[i]
-
+ 
         updatePageRanks(Q, previousPageRank)
         iterations += 1
 
@@ -158,23 +179,32 @@ def computePageRanks():
 
 
 def outputPageRanks():
-    output = sorted(airportList, key = lambda a: a.pageRank, reverse=True)
-    
-    print "Position\tIATA\tPageRank\tName"
-    for i, airport in enumerate(output):
-        print str(i) + '\t' + str(airport)
+    print ""
+    print "##############################################################################"
+    print "\nResults:"
+    print "Rank\tIATA\tPageRank\tName"
 
+    ranking = sorted(airportList, key = lambda a: a.pageRank, reverse = True)
+    for rank, airport in enumerate(ranking):
+        print '{:4d}'.format(rank+1) + '\t' + str(airport)
+
+def executionInfo(iterations, time):
+    print ""
+    print "##############################################################################"
+    print "\nExecution information:"
+    print "\t - #Iterations:", iterations
+    print "\t - Time of computePageRanks():", time
+    print ""
 
 def main():
-    readAirports("airports.txt")
-    readRoutes("routes.txt")
+    initialMessage()
+    readAirports(AIRPORTS_FILE)
+    readRoutes(ROUTES_FILE)
     time1 = time.time()
     iterations = computePageRanks()
     time2 = time.time()
     outputPageRanks()
-
-    print "#Iterations:", iterations
-    print "Time of computePageRanks():", time2-time1
+    executionInfo(iterations, time2-time1)
 
 
 if __name__ == "__main__":
