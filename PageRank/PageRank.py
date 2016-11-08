@@ -118,8 +118,10 @@ def stopConditionIsReached(iterations, previousPageRank):
 def computePageRank(airportPosition):
     destinationAirport = airportList[airportPosition]
     pageRank = 0
+
     if len(destinationAirport.routes) == 0:
         return 1.0/len(airportList)
+        
     for origin in destinationAirport.routes:
         originAirport = airportHash[origin]
         edgeWeight = destinationAirport.routeHash[origin]
@@ -150,16 +152,17 @@ def computePageRanks():
             airport = airportList[i]
 
         updatePageRanks(Q, previousPageRank)
-        print sum(Q)
         iterations += 1
 
     return iterations
 
 
 def outputPageRanks():
-    print "IATA\tPageRank\tName"
-    for airport in airportList:
-        print airport
+    output = sorted(airportList, key = lambda a: a.pageRank, reverse=True)
+    
+    print "Position\tIATA\tPageRank\tName"
+    for i, airport in enumerate(output):
+        print str(i) + '\t' + str(airport)
 
 
 def main():
