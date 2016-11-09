@@ -20,7 +20,7 @@ class Airport:
         self.name = name
         self.routes = set() # set of airports that have this as destination
         self.routeHash = defaultdict(int) # routeHash[origin] = weight
-        self.outweight = 0
+        self.outdegree = 0
         self.pageRank= 0
 
     def __repr__(self):
@@ -108,7 +108,7 @@ def readRoutes(fd):
         destinationAirport = airportHash[destination]
 
         # Origin updates
-        originAirport.outweight += 1
+        originAirport.outdegree += 1
 
         # Destination updates
         destinationAirport.routes.add(origin)
@@ -136,14 +136,14 @@ def stopConditionIsReached(iterations, previousPageRank):
 def computePageRank(airportPosition):
     destinationAirport = airportList[airportPosition]
 
-    if destinationAirport.outweight == 0:
+    if destinationAirport.outdegree == 0:
         return 1.0/len(airportList)
 
     pageRank = 0
     for origin in destinationAirport.routes:
         originAirport = airportHash[origin]
         edgeWeight = destinationAirport.routeHash[origin]
-        pageRank += originAirport.pageRank * edgeWeight/originAirport.outweight
+        pageRank += originAirport.pageRank * edgeWeight/originAirport.outdegree
 
     return pageRank
 
