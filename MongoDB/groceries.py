@@ -143,7 +143,7 @@ def findAssociationRules():
                     rules[i].append( (item2 ,item1) )
 
     end = time()
-    print("End of computation {0} seconds".format(end-start))
+    print("End of computation {0:.3f} seconds".format(end-start))
     print()
     print("##############################################################################")
     print()
