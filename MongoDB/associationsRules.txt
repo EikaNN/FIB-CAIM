@@ -1,0 +1,52 @@
+##############################################################################
+                         MARKET BASKET ANALYSIS                               
+##############################################################################
+
+This program analyses a database of customer's purchases
+MongoDB is used to compute a simple association rule miner
+
+##############################################################################
+
+Reading groceries file from groceries.csv
+There were 9835 transactions
+
+Computing single item transactions
+End of computation: 0.241 seconds
+
+Computing pair item transactions
+End of computation: 2.034 seconds
+
+Computing association rules
+Checking over 9636 pairs of items
+End of computation 6.977827072143555 seconds
+
+##############################################################################
+
+Final Results:
+
+Row 1: With support 0.01 and confidence 0.01 we find 426 associations rules
+Row 2: With support 0.01 and confidence 0.25 we find  96 associations rules
+Row 3: With support 0.01 and confidence 0.50 we find   0 associations rules
+Row 4: With support 0.01 and confidence 0.75 we find   0 associations rules
+Row 5: With support 0.05 and confidence 0.25 we find   4 associations rules
+Row 6: With support 0.07 and confidence 0.25 we find   2 associations rules
+Row 7: With support 0.20 and confidence 0.25 we find   0 associations rules
+Row 8: With support 0.50 and confidence 0.25 we find   0 associations rules
+
+Association Rules:
+
+Row 4 rules:
+	There are no rules for this row
+
+Row 5 rules:
+	other vegetables -> whole milk
+	whole milk -> other vegetables
+	rolls/buns -> whole milk
+	yogurt -> whole milk
+
+Row 6 rules:
+	other vegetables -> whole milk
+	whole milk -> other vegetables
+
+##############################################################################
+
