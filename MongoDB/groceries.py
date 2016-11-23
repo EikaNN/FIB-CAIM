@@ -52,9 +52,9 @@ def singleItemsCount():
         var total = 0;
         for (var i = 0; i < values.length; i++) {
             total += values[i];
-            }
-            return total;
         }
+        return total;
+    }
                    """)
 
     print("Computing single item transactions")
@@ -64,6 +64,7 @@ def singleItemsCount():
     DB.groceries.map_reduce(mapper, reducer, "single")
 
     end = time()
+    print("We found {0} different single items".format(DB.single.count()))
     print("End of computation: {0:.3f} seconds\n".format(end-start))
 
 
@@ -101,6 +102,7 @@ def pairItemsCount():
     DB.groceries.map_reduce(mapper, reducer, "pair")
 
     end = time()
+    print("We found {0} different pairs of items".format(DB.pair.count()))
     print("End of computation: {0:.3f} seconds\n".format(end-start))
 
 

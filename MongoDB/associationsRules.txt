@@ -11,14 +11,16 @@ Reading groceries file from groceries.csv
 There were 9835 transactions
 
 Computing single item transactions
-End of computation: 0.241 seconds
+We found 169 different single items
+End of computation: 0.264 seconds
 
 Computing pair item transactions
-End of computation: 2.034 seconds
+We found 9636 different pairs of items
+End of computation: 2.150 seconds
 
 Computing association rules
 Checking over 9636 pairs of items
-End of computation 6.977827072143555 seconds
+End of computation 7.3210930824279785 seconds
 
 ##############################################################################
 
