@@ -12,15 +12,15 @@ There were 9835 transactions
 
 Computing single item transactions
 We found 169 different single items
-End of computation: 0.264 seconds
+End of computation: 0.285 seconds
 
 Computing pair item transactions
 We found 9636 different pairs of items
-End of computation: 2.150 seconds
+End of computation: 2.014 seconds
 
 Computing association rules
 Checking over 9636 pairs of items
-End of computation 7.3210930824279785 seconds
+End of computation 7.324 seconds
 
 ##############################################################################
 
