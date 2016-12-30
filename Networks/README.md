@@ -14,4 +14,4 @@ If you do not have igraph library installed, you can install it by running:
 ```pip install python-igraph```
 
 To open an IPython notebook:
-```jupyter <notebook>.ipynb```
+```jupyter notebook <name>.ipynb```
