@@ -1,6 +1,6 @@
-# MongoDB and MapReduce #
+# MongoDB and MapReduce
 
-## Contents ##
+## Contents
 
 * mongo.pdf: Assignment instructions
 * groceries.csv: Input data of groceries.py
@@ -8,10 +8,9 @@
 * groceries.py: Source code
 * associationsRules.txt: Sample of groceries.py output
 
-## Execution ##
+## Execution
 
-To execute groceries.py, you need to start a mongoDB server.
-For that, run
+To execute groceries.py, first you need to start a mongoDB server.
 ```
 mongod -dbpath <yourpath>
 ```
